@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIRARC Risk Calculator - Enhanced</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 15px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      overflow: hidden;
+    }
+
+    .header {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      color: white;
+      padding: 30px;
+      text-align: center;
+    }
+
+    .header-content {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .header-logo {
+      width: 80px;
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .header-text h1 {
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    .header-text p {
+      opacity: 0.9;
+      font-size: 0.95rem;
+    }
+
+    .content {
+      padding: 30px;
+    }
+
+    .section {
+      margin-bottom: 30px;
+      padding: 25px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+
+    .section-title {
+      font-size: 1.4rem;
+      color: #2c3e50;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::before {
+      content: "▸";
+      color: #667eea;
+      font-weight: bold;
+    }
+
+    .info-badge {
+      background: #e3f2fd;
+      color: #1976d2;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-left: auto;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 8px;
+      font-size: 0.95rem;
+    }
+
+    .label-help {
+      font-weight: normal;
+      font-size: 0.8rem;
+      color: #666;
+      font-style: italic;
+      display: block;
+      margin-top: 3px;
+    }
+
+    select, input, textarea {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #e1e8ed;
+      border-radius: 8px;
+      font-size: 1rem;
+      transition: all 0.3s;
+      background: white;
+      font-family: inherit;
+    }
+
+    select:focus, input:focus, textarea:focus {
+      outline: none;
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .select-wrapper {
+      position: relative;
+    }
+
+    .select-wrapper::after {
+      content: "▼";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      color: #667eea;
+      font-size: 0.8rem;
+    }
+
+    select {
+      appearance: none;
+      cursor: pointer;
+      padding-right: 40px;
+    }
+
+    .factor-card {
+      background: white;
+      padding: 20px;
+      border-radius: 10px;
+      border: 2px solid #e1e8ed;
+      transition: all 0.3s;
+    }
+
+    .factor-card:hover {
+      border-color: #667eea;
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+    }
+
+    .factor-card.hidden {
+      display: none;
+    }
+
+    .factor-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .factor-icon {
+      width: 35px;
+      height: 35px;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+
+    .factor-name {
+      font-weight: 700;
+      color: #2c3e50;
+      font-size: 1rem;
+    }
+
+    .hazard-notice {
+      background: #fff3cd;
+      border-left: 4px solid #ffc107;
+      padding: 12px 15px;
+      border-radius: 5px;
+      font-size: 0.9rem;
+      color: #856404;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .hazard-notice.show {
+      display: block;
+    }
+
+    .score-preview {
+      display: inline-block;
+      background: #667eea;
+      color: white;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-weight: bold;
+      margin-left: 10px;
+      min-width: 50px;
+      text-align: center;
+      transition: all 0.3s;
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      width: 100%;
+      max-width: 400px;
+      display: block;
+      margin: 30px auto;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-secondary {
+      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      max-width: 300px;
+      margin: 15px auto;
+    }
+
+    .result-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .result-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-bottom: 30px;
+    }
+
+    .result-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      border: 2px solid #e1e8ed;
+    }
+
+    .result-label {
+      font-size: 0.85rem;
+      color: #666;
+      margin-bottom: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .result-value {
+      font-size: 2rem;
+      font-weight: bold;
+      color: #2c3e50;
+    }
+
+    .result-subtitle {
+      font-size: 0.9rem;
+      color: #666;
+      margin-top: 5px;
+    }
+
+    .risk-badge {
+      display: inline-block;
+      padding: 15px 40px;
+      border-radius: 50px;
+      font-size: 1.5rem;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 20px 0;
+    }
+
+    .risk-extreme { background: #8B0000; color: white; }
+    .risk-high { background: #DC143C; color: white; }
+    .risk-medium { background: #FF8C00; color: white; }
+    .risk-low { background: #FFD700; color: #2c3e50; }
+    .risk-very-low { background: #32CD32; color: white; }
+
+    .breakdown {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .breakdown h3 {
+      color: #2c3e50;
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+    }
+
+    .breakdown-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #e1e8ed;
+    }
+
+    .breakdown-item:last-child {
+      border-bottom: none;
+    }
+
+    .breakdown-label {
+      font-weight: 600;
+      color: #2c3e50;
+    }
+
+    .breakdown-value {
+      font-weight: bold;
+      color: #667eea;
+      font-size: 1.1rem;
+    }
+
+    .breakdown-total {
+      background: #667eea;
+      color: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.1rem;
+    }
+
+    .action-box {
+      background: white;
+      border-left: 4px solid #667eea;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+    }
+
+    .action-box h3 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .action-box p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 15px;
+    }
+
+    .google-search-link {
+      display: inline-block;
+      background: #4285F4;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 5px;
+      text-decoration: none;
+      margin-top: 10px;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+
+    .google-search-link:hover {
+      background: #1967D2;
+      transform: translateY(-2px);
+    }
+
+    .risk-matrix {
+      margin-top: 30px;
+      overflow-x: auto;
+    }
+
+    .matrix-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .matrix-table th,
+    .matrix-table td {
+      padding: 15px;
+      text-align: center;
+      border: 1px solid #ddd;
+      font-weight: 600;
+    }
+
+    .matrix-table th {
+      background: #2c3e50;
+      color: white;
+      font-size: 0.9rem;
+    }
+
+    .matrix-table .header-col {
+      background: #34495e;
+      color: white;
+    }
+
+    .matrix-extreme { background: #8B0000 !important; color: white; }
+    .matrix-high { background: #DC143C !important; color: white; }
+    .matrix-medium { background: #FF8C00 !important; color: white; }
+    .matrix-low { background: #FFD700 !important; color: #2c3e50; }
+    .matrix-very-low { background: #32CD32 !important; color: white; }
+
+    .highlight-cell {
+      box-shadow: inset 0 0 0 3px #2c3e50;
+      font-size: 1.3rem;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    .likelihood-interpretation {
+      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 15px;
+      border-left: 4px solid #667eea;
+    }
+
+    .likelihood-interpretation h4 {
+      color: #2c3e50;
+      margin-bottom: 10px;
+      font-size: 1.1rem;
+    }
+
+    .likelihood-interpretation p {
+      color: #555;
+      line-height: 1.6;
+      margin-bottom: 10px;
+    }
+
+    .likelihood-factors-list {
+      background: white;
+      padding: 15px;
+      border-radius: 8px;
+      margin-top: 10px;
+    }
+
+    .likelihood-factors-list ul {
+      margin-left: 20px;
+      color: #555;
+    }
+
+    .likelihood-factors-list li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+
+    .remark-box {
+      background: #fff3cd;
+      border-left: 4px solid #ff9800;
+      padding: 20px;
+      border-radius: 8px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .remark-box.show {
+      display: block;
+    }
+
+    .remark-box h4 {
+      color: #856404;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .remark-box p {
+      color: #856404;
+      margin-bottom: 15px;
+      line-height: 1.6;
+    }
+
+    .remark-box textarea {
+      border: 2px solid #ff9800;
+      background: #fffbf0;
+      min-height: 100px;
+    }
+
+    .remark-box label {
+      color: #856404;
+      font-weight: bold;
+    }
+
+    /* Print Styles */
+    @media print {
+      * {
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        background: white;
+        padding: 0;
+        font-size: 11pt;
+      }
+
+      .container {
+        box-shadow: none;
+        border-radius: 0;
+        max-width: 100%;
+      }
+
+      .header {
+        display: none;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .section {
+        display: none;
+      }
+
+      #printSection {
+        display: block !important;
+      }
+
+      .print-hidden {
+        display: none !important;
+      }
+
+      .print-title {
+        text-align: center;
+        font-size: 16pt;
+        font-weight: bold;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+      }
+
+      .print-section-title {
+        font-size: 12pt;
+        font-weight: bold;
+        margin-top: 15px;
+        margin-bottom: 8px;
+        color: #000;
+      }
+
+      .print-box {
+        border: 2px solid #000;
+        padding: 12px;
+        margin-bottom: 15px;
+        min-height: 80px;
+        page-break-inside: avoid;
+      }
+
+      .print-item {
+        margin-bottom: 8px;
+        line-height: 1.6;
+        font-size: 10pt;
+      }
+
+      .print-label {
+        font-weight: bold;
+        display: inline;
+      }
+
+      .print-box.large {
+        min-height: 120px;
+      }
+
+      .btn, .btn-secondary, .result-grid, .risk-matrix, .action-box a, .header, .likelihood-interpretation {
+        display: none !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .header-logo {
+        width: 60px;
+        height: 60px;
+      }
+
+      .header-text h1 {
+        font-size: 1.5rem;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .section {
+        padding: 20px;
+      }
+
+      .form-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .result-value {
+        font-size: 1.5rem;
+      }
+
+      .risk-badge {
+        font-size: 1.2rem;
+        padding: 12px 30px;
+      }
+    }
+
+    .info-icon {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      background: #667eea;
+      color: white;
+      border-radius: 50%;
+      text-align: center;
+      line-height: 18px;
+      font-size: 0.75rem;
+      cursor: help;
+      margin-left: 5px;
+    }
+
+    .hidden {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="header">
+    <div class="header-content">
+      <div class="header-logo">
+        <img src="logo.svg" alt="HIRARC Logo" />
+      </div>
+      <div class="header-text">
+        <h1>HIRARC Risk Calculator - Enhanced</h1>
+        <p>Data-Driven Risk Assessment Based on DOSH Guidelines</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Basic Information -->
+    <div class="section">
+      <div class="section-title">
+        Basic Information
+      </div>
+      
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="hazardType">Hazard Type:</label>
+          <div class="select-wrapper">
+            <select id="hazardType" onchange="updateHazardType()">
+              <option value="">-- Select Hazard Type --</option>
+              <option value="general">General / Standard Hazard</option>
+              <option value="vehicle">Vehicle / Machinery Hazard</option>
+              <option value="chemical">Chemical / Health Hazard</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="activity">Activity / Work Process:</label>
+          <input type="text" id="activity" placeholder="e.g., Forklift operation, Chemical handling">
+        </div>
+
+        <div class="form-group">
+          <label for="department">Department / Location:</label>
+          <input type="text" id="department" placeholder="e.g., Warehouse, Production Line">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="hazard">Hazard Identified:</label>
+        <textarea id="hazard" placeholder="Describe the hazard in detail..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label for="consequence">Potential Consequence / Risk:</label>
+        <textarea id="consequence" placeholder="What could happen? Describe potential injuries or damages..."></textarea>
+      </div>
+    </div>
+
+    <!-- Likelihood Factors -->
+    <div class="section">
+      <div class="section-title">
+        Likelihood Assessment Factors
+        <span class="info-badge" id="factorBadge">6 Factors</span>
+      </div>
+
+      <div class="form-grid">
+
+        <!-- Factor 1: History -->
+        <div class="factor-card" id="card-history">
+          <div class="factor-header">
+            <div class="factor-icon">📋</div>
+            <div class="factor-name">Accident History</div>
+          </div>
+          <div class="form-group">
+            <label>
+              Past Record (Self-workplace)
+              <span class="label-help">Has this happened before?</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="history" onchange="updatePreview()">
+                <option value="5">Accident occurred before at workplace</option>
+                <option value="4">Near miss / close call occurred</option>
+                <option value="3">Happened in similar industry (not here)</option>
+                <option value="2">No record anywhere</option>
+                <option value="1">Unforeseeable / impossible scenario</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Factor 2: Environment -->
+        <div class="factor-card" id="card-environment">
+          <div class="factor-header">
+            <div class="factor-icon">🌍</div>
+            <div class="factor-name">Environment</div>
+          </div>
+          <div class="form-group">
+            <label>
+              Work Environment Condition
+              <span class="label-help">How is the working environment?</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="environment" onchange="updatePreview()">
+                <option value="5">Very unsafe environment</option>
+                <option value="4">Unsafe / congested area</option>
+                <option value="3">Moderate environment</option>
+                <option value="2">Safe environment</option>
+                <option value="1">Excellent environment</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Factor 3: Proximity (Vehicle/Machinery Only) -->
+        <div class="factor-card hidden" id="card-proximity">
+          <div class="factor-header">
+            <div class="factor-icon">📍</div>
+            <div class="factor-name">Proximity to Hazard</div>
+          </div>
+          <div class="form-group">
+            <label>
+              Distance / Closeness to Hazard
+              <span class="label-help">How close to the danger?</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="proximity" onchange="updatePreview()">
+                <option value="5">Direct contact / in the hazard zone</option>
+                <option value="4">Very close (within arm's reach)</option>
+                <option value="3">Nearby but not too close</option>
+                <option value="2">Safe distance maintained</option>
+                <option value="1">Remote / far from hazard</option>
+              </select>
+            </div>
+          </div>
+          <div class="hazard-notice" id="proximityNotice">
+            ℹ️ Proximity factor appears for Vehicle/Machinery hazards only
+          </div>
+        </div>
+
+        <!-- Factor 4: Frequency -->
+        <div class="factor-card" id="card-frequency">
+          <div class="factor-header">
+            <div class="factor-icon">🔄</div>
+            <div class="factor-name">Exposure Frequency</div>
+          </div>
+          <div class="form-group">
+            <label>
+              How Often Exposed?
+              <span class="label-help">Frequency of task</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="frequency" onchange="updatePreview()">
+                <option value="5">Continuous / all the time</option>
+                <option value="4">Daily / multiple times per day</option>
+                <option value="3">Weekly / few times per week</option>
+                <option value="2">Monthly / rarely</option>
+                <option value="1">Almost never / one-off task</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Factor 5: Duration (Hidden for Vehicle/Machinery) -->
+        <div class="factor-card" id="card-duration">
+          <div class="factor-header">
+            <div class="factor-icon">⏱️</div>
+            <div class="factor-name">Exposure Duration</div>
+          </div>
+          <div class="form-group">
+            <label>
+              How Long Each Time?
+              <span class="label-help">Duration per exposure</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="duration" onchange="updatePreview()">
+                <option value="5">Prolonged (more than 4 hours)</option>
+                <option value="4">Extended (2-4 hours)</option>
+                <option value="3">Moderate (30 min - 2 hours)</option>
+                <option value="2">Brief (less than 30 minutes)</option>
+                <option value="1">Very short (few minutes only)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Factor 6: Control Measures -->
+        <div class="factor-card" id="card-controls">
+          <div class="factor-header">
+            <div class="factor-icon">🛡️</div>
+            <div class="factor-name">Existing Controls</div>
+          </div>
+          <div class="form-group">
+            <label>
+              Current Safety Measures
+              <span class="label-help">What's in place now?</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="controls" onchange="updatePreview()">
+                <option value="5">No control measures at all</option>
+                <option value="4">Insufficient / poorly maintained</option>
+                <option value="3">Minimum controls only</option>
+                <option value="2">Adequate controls in place</option>
+                <option value="1">Comprehensive & well-maintained</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Factor 7: Competency -->
+        <div class="factor-card" id="card-competency">
+          <div class="factor-header">
+            <div class="factor-icon">🎓</div>
+            <div class="factor-name">Worker Competency</div>
+          </div>
+          <div class="form-group">
+            <label>
+              Training & Experience Level
+              <span class="label-help">Knowledge of the task</span>
+            </label>
+            <div class="select-wrapper">
+              <select id="competency" onchange="updatePreview()">
+                <option value="5">No knowledge / training at all</option>
+                <option value="4">New worker / minimal experience</option>
+                <option value="3">Some experience / basic training</option>
+                <option value="2">Experienced / properly trained</option>
+                <option value="1">Expert / highly competent</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Live Preview of Likelihood -->
+      <div class="likelihood-interpretation" id="likelihoodPreview">
+        <h4>📊 Calculated Likelihood Rating: <span class="score-preview" id="likelihoodScore">-</span></h4>
+        <p id="likelihoodDescription">Select factors above to calculate likelihood...</p>
+        <div class="likelihood-factors-list" id="likelihoodFactorsList" style="display: none;">
+          <strong>Contributing Factors:</strong>
+          <ul id="factorBreakdown"></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- Severity Assessment -->
+    <div class="section">
+      <div class="section-title">Severity Assessment</div>
+      
+      <div class="form-group">
+        <label>
+          Select Potential Severity of Consequence:
+          <span class="label-help">Worst case scenario outcome</span>
+        </label>
+        <div class="select-wrapper">
+          <select id="severity" onchange="updatePreview()">
+            <option value="5">Catastrophic - Death, numerous serious bodily injuries, multiple serious bodily injuries or numerous life threatening occupational disease</option>
+            <option value="4">Major - Serious bodily injuries or life threatening occupational diseases</option>
+            <option value="3">Moderate - Injury requiring medical treatment causing >4 days off work</option>
+            <option value="2">Minor - Injury or ill health requiring first aid only</option>
+            <option value="1">Negligible - No injury, no damage</option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculate Button -->
+    <button class="btn" onclick="calculateRisk()">🎯 Calculate Risk Assessment</button>
+
+    <!-- Result Section (Screen View) -->
+    <div id="resultSection" class="hidden">
+      <div class="section">
+        <div class="section-title">📊 Risk Assessment Results</div>
+        
+        <div class="result-container">
+          <!-- Result Cards -->
+          <div class="result-grid">
+            <div class="result-card">
+              <div class="result-label">Likelihood</div>
+              <div class="result-value" id="resultLikelihood">-</div>
+              <div class="result-subtitle" id="resultLikelihoodDesc">-</div>
+            </div>
+
+            <div class="result-card">
+              <div class="result-label">Severity</div>
+              <div class="result-value" id="resultSeverity">-</div>
+              <div class="result-subtitle" id="resultSeverityDesc">-</div>
+            </div>
+
+            <div class="result-card" style="border: 3px solid #667eea;">
+              <div class="result-label">Risk Score</div>
+              <div class="result-value" id="resultRiskScore" style="color: #667eea;">-</div>
+              <div class="result-subtitle">L × S</div>
+            </div>
+          </div>
+
+          <!-- Risk Level Badge -->
+          <div style="text-align: center; margin: 30px 0;">
+            <div class="risk-badge" id="riskBadge">-</div>
+          </div>
+
+          <!-- Assessment Details -->
+          <div class="breakdown">
+            <h3>📋 Assessment Details</h3>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Hazard Type:</span>
+              <span id="detailHazardType">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Activity:</span>
+              <span id="detailActivity">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Department:</span>
+              <span id="detailDepartment">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Hazard:</span>
+              <span id="detailHazard">-</span>
+            </div>
+            <div class="breakdown-item">
+              <span class="breakdown-label">Consequence:</span>
+              <span id="detailConsequence">-</span>
+            </div>
+          </div>
+
+          <!-- Likelihood Calculation Breakdown -->
+          <div class="breakdown">
+            <h3>🔍 Likelihood Calculation Breakdown</h3>
+            <div id="calculationBreakdown"></div>
+            <div class="breakdown-total">
+              <span><strong>Average Likelihood Score:</strong></span>
+              <span id="avgLikelihood">-</span>
+            </div>
+          </div>
+
+          <!-- Special Case Remark Box -->
+          <div class="remark-box" id="remarkBox">
+            <h4>⚠️ Special Case - Remark Required</h4>
+            <p id="remarkCase">-</p>
+            <div class="form-group">
+              <label for="remarkText">Specific Precaution / Control Measure:</label>
+              <textarea id="remarkText" placeholder="Document specific precautions and control measures for this special case..."></textarea>
+            </div>
+          </div>
+
+          <!-- Recommended Action -->
+          <div class="action-box">
+            <h3>⚠️ Recommended Action</h3>
+            <p id="actionText">-</p>
+            <a id="googleSearchLink" class="google-search-link" target="_blank" style="display: none;">
+              🔍 Search Risk Control Measures on Google
+            </a>
+          </div>
+
+          <!-- Print Button -->
+          <button class="btn btn-secondary" onclick="printResult()">🖨️ Print Result (Single Page)</button>
+
+          <!-- Risk Matrix -->
+          <div class="risk-matrix">
+            <h3 style="margin-bottom: 15px; color: #2c3e50;">📊 Risk Matrix Reference</h3>
+            <table class="matrix-table">
+              <thead>
+                <tr>
+                  <th>Likelihood →<br>Severity ↓</th>
+                  <th>1<br>Inconceivable</th>
+                  <th>2<br>Remote</th>
+                  <th>3<br>Conceivable</th>
+                  <th>4<br>Possible</th>
+                  <th>5<br>Most Likely</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="header-col">5<br>Catastrophic</td>
+                  <td class="matrix-medium" data-score="5">5</td>
+                  <td class="matrix-high" data-score="10">10</td>
+                  <td class="matrix-high" data-score="15">15</td>
+                  <td class="matrix-extreme" data-score="20">20</td>
+                  <td class="matrix-extreme" data-score="25">25</td>
+                </tr>
+                <tr>
+                  <td class="header-col">4<br>Fatal</td>
+                  <td class="matrix-low" data-score="4">4</td>
+                  <td class="matrix-medium" data-score="8">8</td>
+                  <td class="matrix-high" data-score="12">12</td>
+                  <td class="matrix-high" data-score="16">16</td>
+                  <td class="matrix-extreme" data-score="20">20</td>
+                </tr>
+                <tr>
+                  <td class="header-col">3<br>Major</td>
+                  <td class="matrix-low" data-score="3">3</td>
+                  <td class="matrix-low" data-score="6">6</td>
+                  <td class="matrix-medium" data-score="9">9</td>
+                  <td class="matrix-high" data-score="12">12</td>
+                  <td class="matrix-high" data-score="15">15</td>
+                </tr>
+                <tr>
+                  <td class="header-col">2<br>Minor</td>
+                  <td class="matrix-very-low" data-score="2">2</td>
+                  <td class="matrix-low" data-score="4">4</td>
+                  <td class="matrix-low" data-score="6">6</td>
+                  <td class="matrix-medium" data-score="8">8</td>
+                  <td class="matrix-medium" data-score="10">10</td>
+                </tr>
+                <tr>
+                  <td class="header-col">1<br>Negligible</td>
+                  <td class="matrix-very-low" data-score="1">1</td>
+                  <td class="matrix-very-low" data-score="2">2</td>
+                  <td class="matrix-low" data-score="3">3</td>
+                  <td class="matrix-low" data-score="4">4</td>
+                  <td class="matrix-medium" data-score="5">5</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Section (Hidden, shows only in print) -->
+    <div id="printSection" class="hidden print-hidden">
+      <div class="print-title">RISK ASSESSMENT ANALYSIS</div>
+
+      <!-- A. Assessment Details -->
+      <div class="print-section-title">A. Assessment Details</div>
+      <div class="print-box">
+        <div class="print-item"><span class="print-label">Hazard Type:</span> <span id="printHazardType">-</span></div>
+        <div class="print-item"><span class="print-label">Activity:</span> <span id="printActivity">-</span></div>
+        <div class="print-item"><span class="print-label">Department:</span> <span id="printDepartment">-</span></div>
+        <div class="print-item"><span class="print-label">Hazard:</span> <span id="printHazard">-</span></div>
+        <div class="print-item"><span class="print-label">Consequence:</span> <span id="printConsequence">-</span></div>
+      </div>
+
+      <!-- B. Likelihood and Severity -->
+      <div class="print-section-title">B. Likelihood and Severity</div>
+      <div class="print-box print-box.large" id="printLikelihoodBox">
+        <!-- Content generated by JavaScript -->
+      </div>
+
+      <!-- C. Recommended Action -->
+      <div class="print-section-title">C. Recommended Action</div>
+      <div class="print-box print-box.large">
+        <div class="print-item" id="printActionText">-</div>
+      </div>
+
+      <!-- D. Remark (if applicable) -->
+      <div id="printRemarkSection" style="display: none;">
+        <div class="print-section-title">D. Special Case Remark</div>
+        <div class="print-box print-box.large">
+          <div class="print-item" id="printRemarkText">-</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+
+// Likelihood descriptions based on DOSH guidelines
+const likelihoodDescriptions = {
+  5: {
+    name: "Most Likely",
+    description: "The most likely result of the hazard being realized. Almost certain to occur.",
+    factors: "Direct exposure, continuous contact, happened before, no controls"
+  },
+  4: {
+    name: "Possible",
+    description: "Has a good chance of occurring and is not unusual. Could happen anytime.",
+    factors: "Frequent exposure, near miss occurred, insufficient controls"
+  },
+  3: {
+    name: "Conceivable",
+    description: "Might occur sometimes in the future. Reasonable chance under certain conditions.",
+    factors: "Intermittent exposure, happened elsewhere, minimum controls"
+  },
+  2: {
+    name: "Remote",
+    description: "Has not been known to occur after many years. Unlikely but possible.",
+    factors: "Low exposure, proper controls, well trained workers"
+  },
+  1: {
+    name: "Inconceivable",
+    description: "Practically impossible and has never occurred. Extremely unlikely.",
+    factors: "No exposure, comprehensive controls, expert workers, safe design"
+  }
+};
+
+const severityDescriptions = {
+  5: "Catastrophic",
+  4: "Fatal",
+  3: "Major",
+  2: "Minor",
+  1: "Negligible"
+};
+
+const factorNames = {
+  history: "Accident History",
+  environment: "Environment",
+  proximity: "Proximity to Hazard",
+  frequency: "Exposure Frequency",
+  duration: "Exposure Duration",
+  controls: "Existing Controls",
+  competency: "Worker Competency"
+};
+
+const factorDescriptions = {
+  history: {
+    5: "Accident occurred before at workplace",
+    4: "Near miss / close call occurred",
+    3: "Happened in similar industry (not here)",
+    2: "No record anywhere",
+    1: "Unforeseeable / impossible scenario"
+  },
+  environment: {
+    5: "Very unsafe environment",
+    4: "Unsafe / congested area",
+    3: "Moderate environment",
+    2: "Safe environment",
+    1: "Excellent environment"
+  },
+  proximity: {
+    5: "Direct contact / in the hazard zone",
+    4: "Very close (within arm's reach)",
+    3: "Nearby but not too close",
+    2: "Safe distance maintained",
+    1: "Remote / far from hazard"
+  },
+  frequency: {
+    5: "Continuous / all the time",
+    4: "Daily / multiple times per day",
+    3: "Weekly / few times per week",
+    2: "Monthly / rarely",
+    1: "Almost never / one-off task"
+  },
+  duration: {
+    5: "Prolonged (more than 4 hours)",
+    4: "Extended (2-4 hours)",
+    3: "Moderate (30 min - 2 hours)",
+    2: "Brief (less than 30 minutes)",
+    1: "Very short (few minutes only)"
+  },
+  controls: {
+    5: "No control measures at all",
+    4: "Insufficient / poorly maintained",
+    3: "Minimum controls only",
+    2: "Adequate controls in place",
+    1: "Comprehensive & well-maintained"
+  },
+  competency: {
+    5: "No knowledge / training at all",
+    4: "New worker / minimal experience",
+    3: "Some experience / basic training",
+    2: "Experienced / properly trained",
+    1: "Expert / highly competent"
+  }
+};
+
+const hazardTypeLabels = {
+  general: "General / Standard Hazard",
+  vehicle: "Vehicle / Machinery Hazard",
+  chemical: "Chemical / Health Hazard"
+};
+
+function updateHazardType() {
+  const hazardType = document.getElementById('hazardType').value;
+  const proximityCard = document.getElementById('card-proximity');
+  const durationCard = document.getElementById('card-duration');
+  const proximityNotice = document.getElementById('proximityNotice');
+  const factorBadge = document.getElementById('factorBadge');
+
+  if (hazardType === 'vehicle') {
+    proximityCard.classList.remove('hidden');
+    durationCard.classList.add('hidden');
+    proximityNotice.classList.add('show');
+    factorBadge.textContent = '7 Factors';
+  } else {
+    proximityCard.classList.add('hidden');
+    durationCard.classList.remove('hidden');
+    proximityNotice.classList.remove('show');
+    factorBadge.textContent = '6 Factors';
+  }
+
+  document.getElementById('history').value = '2';
+  document.getElementById('environment').value = '3';
+  document.getElementById('proximity').value = '3';
+  document.getElementById('frequency').value = '3';
+  document.getElementById('duration').value = '3';
+  document.getElementById('controls').value = '3';
+  document.getElementById('competency').value = '2';
+  
+  updatePreview();
+}
+
+function getActiveLikelihoodFactors() {
+  const hazardType = document.getElementById('hazardType').value;
+  const factors = [];
+
+  factors.push({
+    name: factorNames.history,
+    key: 'history',
+    value: parseInt(document.getElementById('history').value)
+  });
+
+  factors.push({
+    name: factorNames.environment,
+    key: 'environment',
+    value: parseInt(document.getElementById('environment').value)
+  });
+
+  if (hazardType === 'vehicle') {
+    factors.push({
+      name: factorNames.proximity,
+      key: 'proximity',
+      value: parseInt(document.getElementById('proximity').value)
+    });
+  }
+
+  factors.push({
+    name: factorNames.frequency,
+    key: 'frequency',
+    value: parseInt(document.getElementById('frequency').value)
+  });
+
+  if (hazardType !== 'vehicle') {
+    factors.push({
+      name: factorNames.duration,
+      key: 'duration',
+      value: parseInt(document.getElementById('duration').value)
+    });
+  }
+
+  factors.push({
+    name: factorNames.controls,
+    key: 'controls',
+    value: parseInt(document.getElementById('controls').value)
+  });
+
+  factors.push({
+    name: factorNames.competency,
+    key: 'competency',
+    value: parseInt(document.getElementById('competency').value)
+  });
+
+  return factors;
+}
+
+function calculateAverageLikelihood() {
+  const factors = getActiveLikelihoodFactors();
+  const sum = factors.reduce((acc, factor) => acc + factor.value, 0);
+  const average = sum / factors.length;
+  return {
+    sum: sum,
+    count: factors.length,
+    average: average,
+    rounded: Math.round(average)
+  };
+}
+
+function updatePreview() {
+  const hazardType = document.getElementById('hazardType').value;
+
+  if (!hazardType) {
+    document.getElementById('likelihoodScore').textContent = '-';
+    document.getElementById('likelihoodDescription').textContent = 'Select Hazard Type and factors above to calculate likelihood...';
+    document.getElementById('likelihoodFactorsList').style.display = 'none';
+    return;
+  }
+
+  const calculation = calculateAverageLikelihood();
+  const likelihood = calculation.rounded;
+
+  const scoreElement = document.getElementById('likelihoodScore');
+  scoreElement.textContent = likelihood;
+
+  const desc = likelihoodDescriptions[likelihood];
+  document.getElementById('likelihoodDescription').innerHTML = `
+    <strong>${desc.name} (${likelihood}/5):</strong> ${desc.description}
+  `;
+
+  document.getElementById('likelihoodFactorsList').style.display = 'block';
+  const factors = getActiveLikelihoodFactors();
+  const breakdown = document.getElementById('factorBreakdown');
+  
+  let breakdownHTML = '';
+  factors.forEach(factor => {
+    breakdownHTML += `<li>${factor.name}: <strong>${factor.value}/5</strong></li>`;
+  });
+  
+  breakdown.innerHTML = breakdownHTML;
+}
+
+function checkSpecialCases(likelihood, severity) {
+  // Case (i): Likelihood is "Inconceivable" (1) or "Remote" (2), but severity is "Catastrophic" (5)
+  if ((likelihood === 1 || likelihood === 2) && severity === 5) {
+    return {
+      isSpecialCase: true,
+      caseNumber: 'i',
+      description: `<strong>Case (i):</strong> Likelihood is "${likelihoodDescriptions[likelihood].name}" but Severity is "Catastrophic". Although occurrence is unlikely, the potential consequences are severe.`
+    };
+  }
+
+  // Case (ii): Likelihood is "Remote" (2) or "Conceivable" (3), but severity is "Major" (4)
+  if ((likelihood === 2 || likelihood === 3) && severity === 4) {
+    return {
+      isSpecialCase: true,
+      caseNumber: 'ii',
+      description: `<strong>Case (ii):</strong> Likelihood is "${likelihoodDescriptions[likelihood].name}" but Severity is "Major". Though not highly likely, the potential consequences are significant.`
+    };
+  }
+
+  return { isSpecialCase: false };
+}
+
+function calculateRisk() {
+  const hazardType = document.getElementById('hazardType').value;
+
+  if (!hazardType) {
+    alert('Please select a Hazard Type first');
+    return;
+  }
+
+  const activity = document.getElementById('activity').value || 'Not specified';
+  const department = document.getElementById('department').value || 'Not specified';
+  const hazard = document.getElementById('hazard').value || 'Not specified';
+  const consequence = document.getElementById('consequence').value || 'Not specified';
+  const severity = parseInt(document.getElementById('severity').value);
+
+  const calculation = calculateAverageLikelihood();
+  const likelihood = calculation.rounded;
+
+  const riskScore = likelihood * severity;
+
+  // Check for special cases
+  const specialCase = checkSpecialCases(likelihood, severity);
+
+  let riskLevel = '';
+  let riskClass = '';
+  let actionText = '';
+
+  if (riskScore >= 20) {
+    riskLevel = 'EXTREME RISK';
+    riskClass = 'risk-extreme';
+    actionText = '🚨 IMMEDIATE ACTION REQUIRED: Stop work immediately. Do not proceed until comprehensive control measures are implemented. Senior management involvement and emergency response required. This situation poses imminent danger.';
+  } else if (riskScore >= 15) {
+    riskLevel = 'HIGH RISK';
+    riskClass = 'risk-high';
+    actionText = '⚠️ URGENT ACTION REQUIRED: Control measures must be implemented as soon as possible, within 24-48 hours. Management attention and resources required. Work should be closely supervised until risks are reduced.';
+  } else if (riskScore >= 5) {
+    riskLevel = 'MEDIUM RISK';
+    riskClass = 'risk-medium';
+    actionText = '⚡ ACTION REQUIRED: Control measures should be implemented within a defined time period (1-4 weeks). Supervisory attention and planning required. Document the action plan and timeline.';
+  } else if (riskScore >= 3) {
+    riskLevel = 'LOW RISK';
+    riskClass = 'risk-low';
+    actionText = '✅ MONITOR: Control measures should be implemented when feasible. Regular monitoring and review. Existing controls appear adequate but can be improved over time.';
+  } else {
+    riskLevel = 'VERY LOW RISK';
+    riskClass = 'risk-very-low';
+    actionText = '✓ ACCEPTABLE: No immediate action required. Continue with existing controls and conduct periodic reviews. Maintain good practices.';
+  }
+
+  // Screen display
+  document.getElementById('resultLikelihood').textContent = likelihood;
+  document.getElementById('resultLikelihoodDesc').textContent = likelihoodDescriptions[likelihood].name;
+  
+  document.getElementById('resultSeverity').textContent = severity;
+  document.getElementById('resultSeverityDesc').textContent = severityDescriptions[severity];
+  
+  document.getElementById('resultRiskScore').textContent = riskScore;
+
+  const badge = document.getElementById('riskBadge');
+  badge.textContent = riskLevel;
+  badge.className = 'risk-badge ' + riskClass;
+
+  document.getElementById('detailHazardType').textContent = hazardTypeLabels[hazardType];
+  document.getElementById('detailActivity').textContent = activity;
+  document.getElementById('detailDepartment').textContent = department;
+  document.getElementById('detailHazard').textContent = hazard;
+  document.getElementById('detailConsequence').textContent = consequence;
+
+  const factors = getActiveLikelihoodFactors();
+  let breakdownHTML = '';
+  
+  factors.forEach(factor => {
+    breakdownHTML += `
+      <div class="breakdown-item">
+        <span class="breakdown-label">${factor.name}:</span>
+        <span class="breakdown-value">${factor.value}</span>
+      </div>
+    `;
+  });
+
+  breakdownHTML += `
+    <div class="breakdown-item" style="border-top: 2px solid #667eea; margin-top: 10px; padding-top: 10px;">
+      <span class="breakdown-label"><strong>Total Sum:</strong></span>
+      <span class="breakdown-value">${calculation.sum}</span>
+    </div>
+    <div class="breakdown-item">
+      <span class="breakdown-label"><strong>Divided by ${calculation.count} factors:</strong></span>
+      <span class="breakdown-value">${calculation.average.toFixed(2)}</span>
+    </div>
+  `;
+
+  document.getElementById('calculationBreakdown').innerHTML = breakdownHTML;
+  document.getElementById('avgLikelihood').textContent = `${calculation.average.toFixed(2)} ≈ ${likelihood}`;
+
+  // Handle special case remark box
+  const remarkBox = document.getElementById('remarkBox');
+  const printRemarkSection = document.getElementById('printRemarkSection');
+  
+  if (specialCase.isSpecialCase) {
+    remarkBox.classList.add('show');
+    document.getElementById('remarkCase').innerHTML = specialCase.description;
+    printRemarkSection.style.display = 'block';
+  } else {
+    remarkBox.classList.remove('show');
+    printRemarkSection.style.display = 'none';
+  }
+
+  document.getElementById('actionText').textContent = actionText;
+
+  if (activity && activity !== 'Not specified') {
+    const searchQuery = encodeURIComponent(`${activity} risk control measures`);
+    const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
+    const googleLink = document.getElementById('googleSearchLink');
+    googleLink.href = googleSearchUrl;
+    googleLink.style.display = 'inline-block';
+  }
+
+  document.querySelectorAll('.matrix-table td[data-score]').forEach(cell => {
+    cell.classList.remove('highlight-cell');
+    if (parseInt(cell.getAttribute('data-score')) === riskScore) {
+      cell.classList.add('highlight-cell');
+    }
+  });
+
+  // Prepare print section
+  document.getElementById('printHazardType').textContent = hazardTypeLabels[hazardType];
+  document.getElementById('printActivity').textContent = activity;
+  document.getElementById('printDepartment').textContent = department;
+  document.getElementById('printHazard').textContent = hazard;
+  document.getElementById('printConsequence').textContent = consequence;
+
+  // Generate print likelihood breakdown with full descriptions
+  let printLikelihoodHTML = '';
+  factors.forEach(factor => {
+    const desc = factorDescriptions[factor.key][factor.value];
+    printLikelihoodHTML += `<div class="print-item"><span class="print-label">${factor.name} (${factor.value}/5):</span> ${desc}</div>`;
+  });
+
+  printLikelihoodHTML += `<div style="margin-top: 12px; border-top: 1px solid #000; padding-top: 8px;">`;
+  printLikelihoodHTML += `<div class="print-item"><span class="print-label">Total Score:</span> ${calculation.average.toFixed(2)} ≈ ${likelihood} (${likelihoodDescriptions[likelihood].name})</div>`;
+  printLikelihoodHTML += `<div class="print-item"><span class="print-label">Severity:</span> ${severity} (${severityDescriptions[severity]})</div>`;
+  printLikelihoodHTML += `<div class="print-item"><span class="print-label">Risk Score:</span> ${riskScore} (${riskLevel})</div>`;
+  printLikelihoodHTML += `</div>`;
+
+  document.getElementById('printLikelihoodBox').innerHTML = printLikelihoodHTML;
+
+  // Remove emoji from action text for print
+  const cleanActionText = actionText.replace(/[🚨⚠️⚡✅✓]/g, '').trim();
+  document.getElementById('printActionText').textContent = cleanActionText;
+
+  // Print remark if applicable
+  if (specialCase.isSpecialCase) {
+    const remarkText = document.getElementById('remarkText').value || 'No remark entered';
+    const cleanRemarkCase = specialCase.description.replace(/<[^>]*>/g, '');
+    document.getElementById('printRemarkText').textContent = `${cleanRemarkCase}\n\nPrecaution/Control Measure: ${remarkText}`;
+  }
+
+  document.getElementById('resultSection').classList.remove('hidden');
+  document.getElementById('resultSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function printResult() {
+  window.print();
+}
+
+window.addEventListener('load', function() {
+  document.getElementById('hazardType').value = '';
+  updateHazardType();
+});
+
+</script>
+
+</body>
+</html>
