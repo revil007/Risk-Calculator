@@ -401,21 +401,53 @@
       margin-bottom: 15px;
     }
 
+    .search-links-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
     .google-search-link {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
       background: #4285F4;
       color: white;
       padding: 10px 20px;
       border-radius: 5px;
       text-decoration: none;
-      margin-top: 10px;
       transition: all 0.3s;
       font-weight: 600;
+    }
+
+    .google-search-link.hazard-link {
+      background: #d84315;
+    }
+
+    .google-search-link.swp-link {
+      background: #2e7d32;
+    }
+
+    .google-search-link.erp-link {
+      background: #6a1b9a;
     }
 
     .google-search-link:hover {
       background: #1967D2;
       transform: translateY(-2px);
+    }
+
+    .google-search-link.hazard-link:hover {
+      background: #bf360c;
+    }
+
+    .google-search-link.swp-link:hover {
+      background: #1b5e20;
+    }
+
+    .google-search-link.erp-link:hover {
+      background: #4a148c;
     }
 
     .risk-matrix {
@@ -1034,9 +1066,20 @@
           <div class="action-box">
             <h3>⚠️ Recommended Action</h3>
             <p id="actionText">-</p>
-            <a id="googleSearchLink" class="google-search-link" target="_blank" style="display: none;">
-              🔍 Search Risk Control Measures on Google
-            </a>
+            <div class="search-links-wrap">
+              <a id="googleSearchLinkActivity" class="google-search-link" target="_blank" style="display: none;">
+                🔍 Search by Activity/Process
+              </a>
+              <a id="googleSearchLinkHazard" class="google-search-link hazard-link" target="_blank" style="display: none;">
+                🎯 Search by Specific Hazard
+              </a>
+              <a id="googleSearchLinkSWP" class="google-search-link swp-link" target="_blank" style="display: none;">
+                📝 Search Safe Working Procedure (SWP)
+              </a>
+              <a id="googleSearchLinkERP" class="google-search-link erp-link" target="_blank" style="display: none;">
+                🚑 Search Emergency Response Plan (ERP)
+              </a>
+            </div>
           </div>
 
           <!-- Print Button -->
@@ -1508,12 +1551,52 @@ function calculateRisk() {
 
   document.getElementById('actionText').textContent = actionText;
 
+  // Search link 1: based on Activity/Work Process (general operation controls)
+  const activityLink = document.getElementById('googleSearchLinkActivity');
   if (activity && activity !== 'Not specified') {
-    const searchQuery = encodeURIComponent(`${activity} risk control measures`);
-    const googleSearchUrl = `https://www.google.com/search?q=${searchQuery}`;
-    const googleLink = document.getElementById('googleSearchLink');
-    googleLink.href = googleSearchUrl;
-    googleLink.style.display = 'inline-block';
+    const activityQuery = encodeURIComponent(`${activity} risk control measures`);
+    activityLink.href = `https://www.google.com/search?q=${activityQuery}`;
+    activityLink.style.display = 'inline-flex';
+  } else {
+    activityLink.style.display = 'none';
+  }
+
+  // Search link 2: based on Hazard Identified (specific hazard controls)
+  const hazardLink = document.getElementById('googleSearchLinkHazard');
+  if (hazard && hazard !== 'Not specified') {
+    // Truncate long hazard descriptions so the search query stays focused
+    const hazardForSearch = hazard.length > 80 ? hazard.substring(0, 80) : hazard;
+    const hazardQuery = encodeURIComponent(`${hazardForSearch} control measures`);
+    hazardLink.href = `https://www.google.com/search?q=${hazardQuery}`;
+    hazardLink.style.display = 'inline-flex';
+  } else {
+    hazardLink.style.display = 'none';
+  }
+
+  // Search link 3: Safe Working Procedure (SWP) - based on Activity/Work Process
+  const swpLink = document.getElementById('googleSearchLinkSWP');
+  if (activity && activity !== 'Not specified') {
+    const swpQuery = encodeURIComponent(`${activity} safe working procedure SWP`);
+    swpLink.href = `https://www.google.com/search?q=${swpQuery}`;
+    swpLink.style.display = 'inline-flex';
+  } else {
+    swpLink.style.display = 'none';
+  }
+
+  // Search link 4: Emergency Response Plan (ERP) - based on Activity/Work Process
+  // Falls back to Hazard if Activity isn't specified, since ERP is often hazard-triggered (e.g. spill, fire)
+  const erpLink = document.getElementById('googleSearchLinkERP');
+  if (activity && activity !== 'Not specified') {
+    const erpQuery = encodeURIComponent(`${activity} emergency response plan ERP`);
+    erpLink.href = `https://www.google.com/search?q=${erpQuery}`;
+    erpLink.style.display = 'inline-flex';
+  } else if (hazard && hazard !== 'Not specified') {
+    const erpHazardForSearch = hazard.length > 80 ? hazard.substring(0, 80) : hazard;
+    const erpQuery = encodeURIComponent(`${erpHazardForSearch} emergency response plan ERP`);
+    erpLink.href = `https://www.google.com/search?q=${erpQuery}`;
+    erpLink.style.display = 'inline-flex';
+  } else {
+    erpLink.style.display = 'none';
   }
 
   document.querySelectorAll('.matrix-table td[data-score]').forEach(cell => {
