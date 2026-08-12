@@ -5,6 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HIRARC Risk Calculator - Enhanced</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+    :root {
+      --ink: #171B1D;
+      --paper: #EEF0EC;
+      --steel: #24313A;
+      --steel-light: #3C4F59;
+      --yellow: #FFC72C;
+      --yellow-dark: #E0A800;
+      --line: #D8DCD4;
+    }
+
     * {
       margin: 0;
       padding: 0;
@@ -12,26 +24,43 @@
     }
 
     body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: 'IBM Plex Sans', Arial, sans-serif;
+      background: var(--paper);
+      background-image:
+        radial-gradient(circle at 100% 0%, rgba(255,199,44,0.10), transparent 40%),
+        radial-gradient(circle at 0% 100%, rgba(36,49,58,0.06), transparent 40%);
       min-height: 100vh;
-      padding: 20px;
+      padding: 24px;
+      color: var(--ink);
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
       background: white;
-      border-radius: 15px;
-      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      border-radius: 4px;
+      box-shadow: 0 30px 60px rgba(23,27,29,0.18);
       overflow: hidden;
+      border: 1px solid var(--line);
     }
 
     .header {
-      background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+      background: var(--steel);
       color: white;
-      padding: 30px;
+      padding: 30px 30px 24px;
       text-align: center;
+      border-bottom: 7px solid;
+      border-image: repeating-linear-gradient(135deg, var(--yellow) 0 16px, var(--ink) 16px 32px) 7;
+    }
+
+    .header-eyebrow {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.68rem;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--yellow);
+      margin-bottom: 12px;
+      opacity: 0.9;
     }
 
     .header-content {
@@ -42,11 +71,14 @@
     }
 
     .header-logo {
-      width: 80px;
-      height: 80px;
+      width: 68px;
+      height: 68px;
       display: flex;
       align-items: center;
       justify-content: center;
+      background: white;
+      border-radius: 4px;
+      padding: 6px;
     }
 
     .header-logo img {
@@ -56,13 +88,19 @@
     }
 
     .header-text h1 {
+      font-family: 'Oswald', sans-serif;
+      font-weight: 600;
       font-size: 2rem;
-      margin-bottom: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 6px;
     }
 
     .header-text p {
-      opacity: 0.9;
-      font-size: 0.95rem;
+      opacity: 0.75;
+      font-size: 0.88rem;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.3px;
     }
 
     .content {
@@ -70,36 +108,48 @@
     }
 
     .section {
-      margin-bottom: 30px;
-      padding: 25px;
-      background: #f8f9fa;
-      border-radius: 10px;
-      border-left: 4px solid #667eea;
+      margin-bottom: 28px;
+      padding: 26px 28px;
+      background: #FAFAF8;
+      border-radius: 4px;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--yellow);
     }
 
     .section-title {
-      font-size: 1.4rem;
-      color: #2c3e50;
-      margin-bottom: 20px;
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      color: var(--steel);
+      margin-bottom: 22px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .section-title::before {
-      content: "▸";
-      color: #667eea;
-      font-weight: bold;
+    .step-num {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--steel);
+      color: var(--yellow);
+      padding: 3px 9px;
+      border-radius: 3px;
+      letter-spacing: 1px;
     }
 
     .info-badge {
-      background: #e3f2fd;
-      color: #1976d2;
+      background: var(--steel);
+      color: var(--yellow);
       padding: 5px 12px;
-      border-radius: 20px;
-      font-size: 0.75rem;
+      border-radius: 3px;
+      font-size: 0.68rem;
       font-weight: 600;
+      letter-spacing: 0.5px;
       margin-left: auto;
+      font-family: 'IBM Plex Mono', monospace;
     }
 
     .form-grid {
@@ -115,16 +165,16 @@
     label {
       display: block;
       font-weight: 600;
-      color: #2c3e50;
+      color: var(--steel);
       margin-bottom: 8px;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     .label-help {
       font-weight: normal;
-      font-size: 0.8rem;
-      color: #666;
-      font-style: italic;
+      font-size: 0.78rem;
+      color: #7A7F79;
+      font-style: normal;
       display: block;
       margin-top: 3px;
     }
@@ -132,18 +182,19 @@
     select, input, textarea {
       width: 100%;
       padding: 12px;
-      border: 2px solid #e1e8ed;
-      border-radius: 8px;
-      font-size: 1rem;
-      transition: all 0.3s;
+      border: 1.5px solid var(--line);
+      border-radius: 4px;
+      font-size: 0.95rem;
+      transition: all 0.2s;
       background: white;
-      font-family: inherit;
+      font-family: 'IBM Plex Sans', inherit;
+      color: var(--ink);
     }
 
     select:focus, input:focus, textarea:focus {
       outline: none;
-      border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      border-color: var(--yellow-dark);
+      box-shadow: 0 0 0 3px rgba(255,199,44,0.25);
     }
 
     textarea {
@@ -162,8 +213,8 @@
       top: 50%;
       transform: translateY(-50%);
       pointer-events: none;
-      color: #667eea;
-      font-size: 0.8rem;
+      color: var(--steel-light);
+      font-size: 0.75rem;
     }
 
     select {
@@ -175,14 +226,14 @@
     .factor-card {
       background: white;
       padding: 20px;
-      border-radius: 10px;
-      border: 2px solid #e1e8ed;
-      transition: all 0.3s;
+      border-radius: 4px;
+      border: 1.5px solid var(--line);
+      transition: all 0.2s;
     }
 
     .factor-card:hover {
-      border-color: #667eea;
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.15);
+      border-color: var(--yellow-dark);
+      box-shadow: 0 4px 14px rgba(23,27,29,0.08);
     }
 
     .factor-card.hidden {
@@ -197,20 +248,24 @@
     }
 
     .factor-icon {
-      width: 35px;
-      height: 35px;
-      background: linear-gradient(135deg, #667eea, #764ba2);
-      border-radius: 8px;
+      width: 34px;
+      height: 34px;
+      background: var(--steel);
+      border-radius: 4px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
+      flex-shrink: 0;
     }
 
     .factor-name {
-      font-weight: 700;
-      color: #2c3e50;
-      font-size: 1rem;
+      font-family: 'Oswald', sans-serif;
+      font-weight: 500;
+      letter-spacing: 0.3px;
+      text-transform: uppercase;
+      color: var(--steel);
+      font-size: 0.98rem;
     }
 
     .hazard-notice {
@@ -230,27 +285,31 @@
 
     .score-preview {
       display: inline-block;
-      background: #667eea;
-      color: white;
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-weight: bold;
+      background: var(--steel);
+      color: var(--yellow);
+      padding: 5px 16px;
+      border-radius: 4px;
+      font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace;
       margin-left: 10px;
-      min-width: 50px;
+      min-width: 40px;
       text-align: center;
       transition: all 0.3s;
     }
 
     .btn {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border: none;
+      background: var(--yellow);
+      color: var(--ink);
+      border: 2px solid var(--ink);
       padding: 15px 40px;
-      border-radius: 50px;
-      font-size: 1.1rem;
-      font-weight: 600;
+      border-radius: 4px;
+      font-size: 1rem;
+      font-weight: 700;
+      font-family: 'Oswald', sans-serif;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
       cursor: pointer;
-      transition: all 0.3s;
+      transition: all 0.2s;
       width: 100%;
       max-width: 400px;
       display: block;
@@ -258,8 +317,10 @@
     }
 
     .btn:hover {
+      background: var(--ink);
+      color: var(--yellow);
       transform: translateY(-2px);
-      box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+      box-shadow: 0 10px 25px rgba(23,27,29,0.25);
     }
 
     .btn:active {
@@ -267,9 +328,17 @@
     }
 
     .btn-secondary {
-      background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);
+      background: var(--steel);
+      color: white;
+      border-color: var(--steel);
       max-width: 300px;
       margin: 15px auto;
+    }
+
+    .btn-secondary:hover {
+      background: white;
+      color: var(--steel);
+      border-color: var(--steel);
     }
 
     .result-container {
@@ -287,25 +356,27 @@
     }
 
     .result-card {
-      background: #f8f9fa;
+      background: #FAFAF8;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 4px;
       text-align: center;
-      border: 2px solid #e1e8ed;
+      border: 1.5px solid var(--line);
     }
 
     .result-label {
-      font-size: 0.85rem;
-      color: #666;
+      font-size: 0.76rem;
+      color: #7A7F79;
       margin-bottom: 8px;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 1px;
+      font-family: 'IBM Plex Mono', monospace;
     }
 
     .result-value {
-      font-size: 2rem;
-      font-weight: bold;
-      color: #2c3e50;
+      font-family: 'Oswald', sans-serif;
+      font-size: 2.1rem;
+      font-weight: 600;
+      color: var(--steel);
     }
 
     .result-subtitle {
@@ -316,13 +387,15 @@
 
     .risk-badge {
       display: inline-block;
-      padding: 15px 40px;
-      border-radius: 50px;
+      padding: 16px 44px;
+      border-radius: 4px;
+      font-family: 'Oswald', sans-serif;
       font-size: 1.5rem;
-      font-weight: bold;
+      font-weight: 600;
       text-transform: uppercase;
-      letter-spacing: 1px;
+      letter-spacing: 1.5px;
       margin: 20px 0;
+      border: 3px solid var(--ink);
     }
 
     .risk-extreme { background: #8B0000; color: white; }
@@ -332,16 +405,21 @@
     .risk-very-low { background: #32CD32; color: white; }
 
     .breakdown {
-      background: #f8f9fa;
+      background: #FAFAF8;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 4px;
       margin-top: 20px;
+      border: 1px solid var(--line);
     }
 
     .breakdown h3 {
-      color: #2c3e50;
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      color: var(--steel);
       margin-bottom: 15px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
 
     .breakdown-item {
@@ -362,33 +440,41 @@
     }
 
     .breakdown-value {
-      font-weight: bold;
-      color: #667eea;
-      font-size: 1.1rem;
+      font-weight: 700;
+      font-family: 'IBM Plex Mono', monospace;
+      color: var(--steel);
+      font-size: 1.05rem;
     }
 
     .breakdown-total {
-      background: #667eea;
-      color: white;
+      background: var(--steel);
+      color: var(--yellow);
       padding: 15px;
-      border-radius: 8px;
+      border-radius: 4px;
       margin-top: 10px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 600;
     }
 
     .action-box {
       background: white;
-      border-left: 4px solid #667eea;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--yellow);
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 4px;
       margin-top: 20px;
     }
 
     .action-box h3 {
-      color: #2c3e50;
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      color: var(--steel);
       margin-bottom: 10px;
       display: flex;
       align-items: center;
@@ -472,14 +558,18 @@
     }
 
     .matrix-table th {
-      background: #2c3e50;
+      background: var(--steel);
       color: white;
-      font-size: 0.9rem;
+      font-size: 0.82rem;
+      font-family: 'IBM Plex Mono', monospace;
+      letter-spacing: 0.3px;
     }
 
     .matrix-table .header-col {
-      background: #34495e;
+      background: var(--steel-light);
       color: white;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 0.82rem;
     }
 
     .matrix-extreme { background: #8B0000 !important; color: white; }
@@ -500,17 +590,22 @@
     }
 
     .likelihood-interpretation {
-      background: linear-gradient(135deg, #e3f2fd 0%, #f3e5f5 100%);
+      background: linear-gradient(135deg, #FFF8E1 0%, #F5F3EC 100%);
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 4px;
       margin-top: 15px;
-      border-left: 4px solid #667eea;
+      border: 1px solid var(--line);
+      border-left: 4px solid var(--yellow);
     }
 
     .likelihood-interpretation h4 {
-      color: #2c3e50;
+      font-family: 'Oswald', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 500;
+      color: var(--steel);
       margin-bottom: 10px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
     }
 
     .likelihood-interpretation p {
@@ -722,12 +817,12 @@
 <div class="container">
   <div class="header">
     <div class="header-content">
-      <div class="header-logo">
-        <img src="logo.svg" alt="HIRARC Logo" />
+      <div class="header-logo" id="headerLogo">
+        <img src="logo.svg" alt="HIRARC Logo" onerror="document.getElementById('headerLogo').style.display='none'" />
       </div>
       <div class="header-text">
-        <h1>SCI HIRARC CALCULATOR</h1>
-        <p>Data-Driven Risk Assessment Based on DOSH Guidelines</p>
+        <h1>SCI HIRARC Calculator</h1>
+        <p>(Based on DOSH's New HIRARC Guidelines)</p>
       </div>
     </div>
   </div>
@@ -737,7 +832,7 @@
     <!-- Basic Information -->
     <div class="section">
       <div class="section-title">
-        Basic Information
+        <span class="step-num">01</span> Basic Information
       </div>
       
       <div class="form-grid">
@@ -778,7 +873,7 @@
     <!-- Likelihood Factors -->
     <div class="section">
       <div class="section-title">
-        Likelihood Assessment Factors
+        <span class="step-num">02</span> Likelihood Assessment Factors
         <span class="info-badge" id="factorBadge">6 Factors</span>
       </div>
 
@@ -952,7 +1047,7 @@
 
       <!-- Live Preview of Likelihood -->
       <div class="likelihood-interpretation" id="likelihoodPreview">
-        <h4>📊 Calculated Likelihood Rating: <span class="score-preview" id="likelihoodScore">-</span></h4>
+        <h4>Calculated Likelihood Rating: <span class="score-preview" id="likelihoodScore">-</span></h4>
         <p id="likelihoodDescription">Select factors above to calculate likelihood...</p>
         <div class="likelihood-factors-list" id="likelihoodFactorsList" style="display: none;">
           <strong>Contributing Factors:</strong>
@@ -963,7 +1058,7 @@
 
     <!-- Severity Assessment -->
     <div class="section">
-      <div class="section-title">Severity Assessment</div>
+      <div class="section-title"><span class="step-num">03</span> Severity Assessment</div>
       
       <div class="form-group">
         <label>
@@ -983,12 +1078,12 @@
     </div>
 
     <!-- Calculate Button -->
-    <button class="btn" onclick="calculateRisk()">🎯 Calculate Risk Assessment</button>
+    <button class="btn" onclick="calculateRisk()">Calculate Risk Assessment</button>
 
     <!-- Result Section (Screen View) -->
     <div id="resultSection" class="hidden">
       <div class="section">
-        <div class="section-title">📊 Risk Assessment Results</div>
+        <div class="section-title"><span class="step-num">04</span> Risk Assessment Results</div>
         
         <div class="result-container">
           <!-- Result Cards -->
@@ -1019,7 +1114,7 @@
 
           <!-- Assessment Details -->
           <div class="breakdown">
-            <h3>📋 Assessment Details</h3>
+            <h3>Assessment Details</h3>
             <div class="breakdown-item">
               <span class="breakdown-label">Hazard Type:</span>
               <span id="detailHazardType">-</span>
@@ -1044,7 +1139,7 @@
 
           <!-- Likelihood Calculation Breakdown -->
           <div class="breakdown">
-            <h3>🔍 Likelihood Calculation Breakdown</h3>
+            <h3>Likelihood Calculation Breakdown</h3>
             <div id="calculationBreakdown"></div>
             <div class="breakdown-total">
               <span><strong>Average Likelihood Score:</strong></span>
@@ -1054,7 +1149,7 @@
 
           <!-- Special Case Remark Box -->
           <div class="remark-box" id="remarkBox">
-            <h4>⚠️ Special Case - Remark Required</h4>
+            <h4>Special Case — Remark Required</h4>
             <p id="remarkCase">-</p>
             <div class="form-group">
               <label for="remarkText">Specific Precaution / Control Measure:</label>
@@ -1064,7 +1159,7 @@
 
           <!-- Recommended Action -->
           <div class="action-box">
-            <h3>⚠️ Recommended Action</h3>
+            <h3>Recommended Action</h3>
             <p id="actionText">-</p>
             <div class="search-links-wrap">
               <a id="googleSearchLinkActivity" class="google-search-link" target="_blank" style="display: none;">
@@ -1083,11 +1178,11 @@
           </div>
 
           <!-- Print Button -->
-          <button class="btn btn-secondary" onclick="printResult()">🖨️ Print Result (Single Page)</button>
+          <button class="btn btn-secondary" onclick="printResult()">Print Result (Single Page)</button>
 
           <!-- Risk Matrix -->
           <div class="risk-matrix">
-            <h3 style="margin-bottom: 15px; color: #2c3e50;">📊 Risk Matrix Reference</h3>
+            <h3 style="margin-bottom: 15px; font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 500; color: var(--steel);">Risk Matrix Reference</h3>
             <table class="matrix-table">
               <thead>
                 <tr>
@@ -1164,20 +1259,20 @@
 
       <!-- B. Likelihood and Severity -->
       <div class="print-section-title">B. Likelihood and Severity</div>
-      <div class="print-box print-box.large" id="printLikelihoodBox">
+      <div class="print-box large" id="printLikelihoodBox">
         <!-- Content generated by JavaScript -->
       </div>
 
       <!-- C. Recommended Action -->
       <div class="print-section-title">C. Recommended Action</div>
-      <div class="print-box print-box.large">
+      <div class="print-box large">
         <div class="print-item" id="printActionText">-</div>
       </div>
 
       <!-- D. Remark (if applicable) -->
       <div id="printRemarkSection" style="display: none;">
         <div class="print-section-title">D. Special Case Remark</div>
-        <div class="print-box print-box.large">
+        <div class="print-box large">
           <div class="print-item" id="printRemarkText">-</div>
         </div>
       </div>
@@ -1219,8 +1314,8 @@ const likelihoodDescriptions = {
 
 const severityDescriptions = {
   5: "Catastrophic",
-  4: "Fatal",
-  3: "Major",
+  4: "Major",
+  3: "Moderate",
   2: "Minor",
   1: "Negligible"
 };
